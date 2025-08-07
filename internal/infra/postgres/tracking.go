@@ -28,7 +28,7 @@ func (r *TrackingRepo) Create(ctx context.Context, trc *entity.Tracking) (*entit
 	err := r.Pool.QueryRow(ctx,
 		`INSERT INTO trackings (cryptocurrency_id, is_active)
 		VALUES ($1, $2)
-		RETURNING id;`, trc.CryptocurrencieID, trc.IsActive).Scan(&trc.ID)
+		RETURNING id;`, trc.CryptocurrencyID, trc.IsActive).Scan(&trc.ID)
 	if err != nil {
 		if strings.Contains(err.Error(), "SQLSTATE 23505") {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrTrackingAlreadyExists)
@@ -45,7 +45,7 @@ func (r *TrackingRepo) get(ctx context.Context, op string, condition string, arg
 		args...)
 
 	var t entity.Tracking
-	err := row.Scan(t.ID, t.CryptocurrencieID, t.IsActive)
+	err := row.Scan(t.ID, t.CryptocurrencyID, t.IsActive)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrTrackingNotFound)
@@ -56,8 +56,8 @@ func (r *TrackingRepo) get(ctx context.Context, op string, condition string, arg
 	return &t, nil
 }
 
-func (r *TrackingRepo) GetByCryptocurrencieID(ctx context.Context, crid int) (*entity.Tracking, error) {
-	const op = "TrackingRepo.GetByCryptocurrencieID"
+func (r *TrackingRepo) GetByCryptocurrencyID(ctx context.Context, crid int) (*entity.Tracking, error) {
+	const op = "TrackingRepo.GetByCryptocurrencyID"
 	condition := "cryptocurrency_id=$1"
 
 	return r.get(ctx, op, condition, crid)
@@ -77,7 +77,7 @@ func (r *TrackingRepo) GetActive(ctx context.Context) ([]entity.Tracking, error)
 		var trck entity.Tracking
 
 		err := rows.Scan(
-			&trck.ID, &trck.CryptocurrencieID, &trck.IsActive,
+			&trck.ID, &trck.CryptocurrencyID, &trck.IsActive,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)

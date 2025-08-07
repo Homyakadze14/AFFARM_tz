@@ -22,7 +22,7 @@ func NewCryptocurrencyRepository(pg *postgres.Postgres) *CryptocurRepo {
 	return &CryptocurRepo{pg}
 }
 
-func (r *CryptocurRepo) Create(ctx context.Context, cryptocur *entity.Cryptocurrencie) (*entity.Cryptocurrencie, error) {
+func (r *CryptocurRepo) Create(ctx context.Context, cryptocur *entity.Cryptocurrency) (*entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.Create"
 
 	err := r.Pool.QueryRow(ctx,
@@ -39,12 +39,12 @@ func (r *CryptocurRepo) Create(ctx context.Context, cryptocur *entity.Cryptocurr
 	return cryptocur, nil
 }
 
-func (r *CryptocurRepo) get(ctx context.Context, op string, condition string, args ...interface{}) (*entity.Cryptocurrencie, error) {
+func (r *CryptocurRepo) get(ctx context.Context, op string, condition string, args ...interface{}) (*entity.Cryptocurrency, error) {
 	row := r.Pool.QueryRow(ctx,
 		fmt.Sprintf("SELECT id, symbol, name FROM cryptocurrencies WHERE %s", condition),
 		args...)
 
-	var c entity.Cryptocurrencie
+	var c entity.Cryptocurrency
 	err := row.Scan(c.ID, c.Symbol, c.Name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -56,14 +56,14 @@ func (r *CryptocurRepo) get(ctx context.Context, op string, condition string, ar
 	return &c, nil
 }
 
-func (r *CryptocurRepo) GetBySymbol(ctx context.Context, symbol string) (*entity.Cryptocurrencie, error) {
+func (r *CryptocurRepo) GetBySymbol(ctx context.Context, symbol string) (*entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.GetBySymbol"
 	condition := "symbol=$1"
 
 	return r.get(ctx, op, condition, symbol)
 }
 
-func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrencie, error) {
+func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.GetAll"
 
 	rows, err := r.Pool.Query(ctx,
@@ -72,9 +72,9 @@ func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrencie, e
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	crypts := make([]entity.Cryptocurrencie, 0, cryptDefaultSliceCap)
+	crypts := make([]entity.Cryptocurrency, 0, cryptDefaultSliceCap)
 	for rows.Next() {
-		var crypt entity.Cryptocurrencie
+		var crypt entity.Cryptocurrency
 
 		err := rows.Scan(
 			&crypt.ID, &crypt.Symbol, &crypt.Name,
@@ -89,7 +89,7 @@ func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrencie, e
 	return crypts, nil
 }
 
-func (r *CryptocurRepo) CreateOrGet(ctx context.Context, c *entity.Cryptocurrencie) (*entity.Cryptocurrencie, error) {
+func (r *CryptocurRepo) CreateOrGet(ctx context.Context, c *entity.Cryptocurrency) (*entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.CreateOrGet"
 
 	c, err := r.Create(ctx, c)
