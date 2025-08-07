@@ -8,6 +8,7 @@ import (
 
 	"github.com/Homyakadze14/AFFARM_tz/internal/config"
 	v1 "github.com/Homyakadze14/AFFARM_tz/internal/controller/rest/v1"
+	"github.com/Homyakadze14/AFFARM_tz/internal/infra/background"
 	"github.com/Homyakadze14/AFFARM_tz/internal/infra/http"
 	psg "github.com/Homyakadze14/AFFARM_tz/internal/infra/postgres"
 	services "github.com/Homyakadze14/AFFARM_tz/internal/usecase"
@@ -19,6 +20,7 @@ import (
 
 type HttpServer struct {
 	s   *httpserver.Server
+	p   *background.Parser
 	db  *postgres.Postgres
 	log *slog.Logger
 }
@@ -42,20 +44,28 @@ func Run(
 	// Client
 	timeout := 5 * time.Second
 	binanceClient := http.NewBinanceClient(log, timeout)
+	updateInterval := 5 * time.Second
+	parser := background.NewParser(log, updateInterval, 10, historyRepo, cryptocurRepo, binanceClient)
 
 	// Services
-	cryptocurService := services.NewCryptocurrencyService(log, cryptocurRepo, trakingRepo, historyRepo, binanceClient)
+	cryptocurService := services.NewCryptocurrencyService(log, cryptocurRepo, trakingRepo, historyRepo, binanceClient, parser)
+
+	// Parser
+	go func() {
+		parser.Start()
+	}()
 
 	// HTTP Server
 	handler := gin.New()
 	v1.NewRouter(log, handler, cryptocurService)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
-	return &HttpServer{s: httpServer, db: pg, log: log}
+	return &HttpServer{s: httpServer, db: pg, log: log, p: parser}
 }
 
 func (s *HttpServer) Shutdown() {
 	defer s.db.Close()
+	defer s.p.Stop()
 	err := s.s.Shutdown()
 	if err != nil {
 		s.log.Error(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err).Error())

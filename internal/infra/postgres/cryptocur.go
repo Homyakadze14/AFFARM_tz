@@ -63,32 +63,6 @@ func (r *CryptocurRepo) GetBySymbol(ctx context.Context, symbol string) (*entity
 	return r.get(ctx, op, condition, symbol)
 }
 
-func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrency, error) {
-	const op = "CryptocurRepo.GetAll"
-
-	rows, err := r.Pool.Query(ctx,
-		"SELECT id, symbol, name FROM cryptocurrencies")
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	crypts := make([]entity.Cryptocurrency, 0, cryptDefaultSliceCap)
-	for rows.Next() {
-		var crypt entity.Cryptocurrency
-
-		err := rows.Scan(
-			&crypt.ID, &crypt.Symbol,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
-		}
-
-		crypts = append(crypts, crypt)
-	}
-
-	return crypts, nil
-}
-
 func (r *CryptocurRepo) CreateOrGet(ctx context.Context, c *entity.Cryptocurrency) (*entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.CreateOrGet"
 
@@ -105,4 +79,32 @@ func (r *CryptocurRepo) CreateOrGet(ctx context.Context, c *entity.Cryptocurrenc
 	}
 
 	return cr, nil
+}
+
+func (r *CryptocurRepo) GetActive(ctx context.Context) ([]entity.Cryptocurrency, error) {
+	const op = "CryptocurRepo.GetActive"
+
+	query := `SELECT cr.id, symbol FROM cryptocurrencies AS cr 
+			LEFT JOIN trackings AS t ON cryptocurrency_id=cr.id WHERE t.is_active=true`
+
+	rows, err := r.Pool.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	crs := make([]entity.Cryptocurrency, 0, trackDefaultSliceCap)
+	for rows.Next() {
+		var cr entity.Cryptocurrency
+
+		err := rows.Scan(
+			&cr.ID, &cr.Symbol,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+
+		crs = append(crs, cr)
+	}
+
+	return crs, nil
 }

@@ -4,23 +4,32 @@ definitions:
     properties:
       symbol:
         type: string
+    required:
+    - symbol
     type: object
   dto.PriceRequest:
     properties:
       symbol:
         type: string
       timestamp:
-        type: string
+        type: integer
+    required:
+    - symbol
+    - timestamp
     type: object
   dto.PriceResponse:
     properties:
       price:
         type: number
+      timestamp:
+        type: integer
     type: object
   dto.RemoveCryptocurrencyRequest:
     properties:
       symbol:
         type: string
+    required:
+    - symbol
     type: object
 host: localhost:8080
 info:

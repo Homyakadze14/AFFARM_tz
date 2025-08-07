@@ -63,32 +63,6 @@ func (r *TrackingRepo) GetByCryptocurrencyID(ctx context.Context, crid int) (*en
 	return r.get(ctx, op, condition, crid)
 }
 
-func (r *TrackingRepo) GetActive(ctx context.Context) ([]entity.Tracking, error) {
-	const op = "TrackingRepo.GetActive"
-
-	rows, err := r.Pool.Query(ctx,
-		"SELECT id, cryptocurrency_id, is_active FROM trackings WHERE is_active=true")
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	trcks := make([]entity.Tracking, 0, trackDefaultSliceCap)
-	for rows.Next() {
-		var trck entity.Tracking
-
-		err := rows.Scan(
-			&trck.ID, &trck.CryptocurrencyID, &trck.IsActive,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
-		}
-
-		trcks = append(trcks, trck)
-	}
-
-	return trcks, nil
-}
-
 func (r *TrackingRepo) Update(ctx context.Context, trc *entity.Tracking) (*entity.Tracking, error) {
 	const op = "TrackingRepo.Update"
 

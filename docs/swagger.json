@@ -130,6 +130,9 @@
     "definitions": {
         "dto.AddCryptocurrencyRequest": {
             "type": "object",
+            "required": [
+                "symbol"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"
@@ -138,12 +141,16 @@
         },
         "dto.PriceRequest": {
             "type": "object",
+            "required": [
+                "symbol",
+                "timestamp"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"
                 },
                 "timestamp": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -152,11 +159,17 @@
             "properties": {
                 "price": {
                     "type": "number"
+                },
+                "timestamp": {
+                    "type": "integer"
                 }
             }
         },
         "dto.RemoveCryptocurrencyRequest": {
             "type": "object",
+            "required": [
+                "symbol"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"

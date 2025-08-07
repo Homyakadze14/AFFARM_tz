@@ -136,6 +136,9 @@ const docTemplate = `{
     "definitions": {
         "dto.AddCryptocurrencyRequest": {
             "type": "object",
+            "required": [
+                "symbol"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"
@@ -144,12 +147,16 @@ const docTemplate = `{
         },
         "dto.PriceRequest": {
             "type": "object",
+            "required": [
+                "symbol",
+                "timestamp"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"
                 },
                 "timestamp": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -158,11 +165,17 @@ const docTemplate = `{
             "properties": {
                 "price": {
                     "type": "number"
+                },
+                "timestamp": {
+                    "type": "integer"
                 }
             }
         },
         "dto.RemoveCryptocurrencyRequest": {
             "type": "object",
+            "required": [
+                "symbol"
+            ],
             "properties": {
                 "symbol": {
                     "type": "string"

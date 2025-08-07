@@ -27,8 +27,12 @@ type HistoryStorage interface {
 }
 
 type CryptoClient interface {
-	GetPrice(symbol string, currency string) (float64, error)
 	SymbolExists(symbol string) (bool, error)
+}
+
+type Parser interface {
+	AddCoin(c entity.Cryptocurrency)
+	RemoveCoin(c entity.Cryptocurrency)
 }
 
 type CryptocurrencyService struct {
@@ -37,6 +41,7 @@ type CryptocurrencyService struct {
 	tst         TrackingStorage
 	hst         HistoryStorage
 	cryptoCient CryptoClient
+	parser      Parser
 }
 
 func NewCryptocurrencyService(
@@ -45,6 +50,7 @@ func NewCryptocurrencyService(
 	tst TrackingStorage,
 	hst HistoryStorage,
 	cryptoCient CryptoClient,
+	parser Parser,
 ) *CryptocurrencyService {
 	return &CryptocurrencyService{
 		log:         log,
@@ -52,6 +58,7 @@ func NewCryptocurrencyService(
 		tst:         tst,
 		hst:         hst,
 		cryptoCient: cryptoCient,
+		parser:      parser,
 	}
 }
 
@@ -94,8 +101,7 @@ func (s *CryptocurrencyService) Add(ctx context.Context, cr *entity.Cryptocurren
 			log.Error(fmt.Sprintf("fail to create tracking! Error: %s", err))
 			return err
 		}
-
-		// TODO: Запуск сбора цены
+		s.parser.AddCoin(*cr)
 	}
 
 	if !trc.IsActive {
@@ -105,8 +111,7 @@ func (s *CryptocurrencyService) Add(ctx context.Context, cr *entity.Cryptocurren
 			log.Error(fmt.Sprintf("fail to update tracking! Error: %s", err))
 			return err
 		}
-
-		// TODO: Запуск сбора цены
+		s.parser.AddCoin(*cr)
 	}
 	log.Debug("successfully added cryptocurrency")
 
@@ -138,7 +143,7 @@ func (s *CryptocurrencyService) Remove(ctx context.Context, cr *entity.Cryptocur
 		return err
 	}
 
-	// TODO: Удалить задачу сбора цен
+	s.parser.RemoveCoin(*cr)
 	log.Debug("successfully removed cryptocurrency")
 
 	return nil
