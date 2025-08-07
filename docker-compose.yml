@@ -1,0 +1,23 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    volumes:
+      - ./ofs-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'pass'
+      POSTGRES_DB: 'postgres'
+    ports:
+      - 5432:5432
+
+  cryptocurrency_microservice:
+    build: .
+    container_name: cryptocurrency_microservice
+    image: cryptocurrency_microservice
+    restart: always
+    env_file:
+      - config/.env
+    ports:
+      - 8080:8080
