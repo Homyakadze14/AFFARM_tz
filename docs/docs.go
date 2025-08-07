@@ -141,7 +141,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 }
             }
         },
@@ -153,10 +154,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 },
                 "timestamp": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1754578944
                 }
             }
         },
@@ -178,7 +181,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 }
             }
         }

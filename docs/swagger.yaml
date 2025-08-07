@@ -3,6 +3,7 @@ definitions:
   dto.AddCryptocurrencyRequest:
     properties:
       symbol:
+        example: BTC
         type: string
     required:
     - symbol
@@ -10,8 +11,10 @@ definitions:
   dto.PriceRequest:
     properties:
       symbol:
+        example: BTC
         type: string
       timestamp:
+        example: 1754578944
         type: integer
     required:
     - symbol
@@ -27,6 +30,7 @@ definitions:
   dto.RemoveCryptocurrencyRequest:
     properties:
       symbol:
+        example: BTC
         type: string
     required:
     - symbol

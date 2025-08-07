@@ -135,7 +135,8 @@
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 }
             }
         },
@@ -147,10 +148,12 @@
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 },
                 "timestamp": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1754578944
                 }
             }
         },
@@ -172,7 +175,8 @@
             ],
             "properties": {
                 "symbol": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BTC"
                 }
             }
         }
