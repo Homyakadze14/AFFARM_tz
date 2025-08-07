@@ -45,7 +45,7 @@ func (r *CryptocurRepo) get(ctx context.Context, op string, condition string, ar
 		args...)
 
 	var c entity.Cryptocurrency
-	err := row.Scan(c.ID, c.Symbol)
+	err := row.Scan(&c.ID, &c.Symbol)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrCryptocurrencyNotFound)
@@ -92,17 +92,17 @@ func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrency, er
 func (r *CryptocurRepo) CreateOrGet(ctx context.Context, c *entity.Cryptocurrency) (*entity.Cryptocurrency, error) {
 	const op = "CryptocurRepo.CreateOrGet"
 
-	c, err := r.Create(ctx, c)
+	cr, err := r.Create(ctx, c)
 	if err != nil {
 		if !errors.Is(err, common.ErrCryptocurrencyAlreadyExists) {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		c, err = r.GetBySymbol(ctx, c.Symbol)
+		cr, err = r.GetBySymbol(ctx, c.Symbol)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 	}
 
-	return c, nil
+	return cr, nil
 }

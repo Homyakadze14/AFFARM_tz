@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Homyakadze14/AFFARM_tz/internal/common"
@@ -32,7 +34,7 @@ func NewBinanceClient(log *slog.Logger, timeout time.Duration) *BinanceClient {
 }
 
 type Cryptocurrency struct {
-	Price float64 `json:"price"`
+	Price string `json:"price"`
 }
 
 func (c *BinanceClient) GetPrice(symbol string, currency string) (float64, error) {
@@ -57,8 +59,7 @@ func (c *BinanceClient) GetPrice(symbol string, currency string) (float64, error
 		return 0, common.ErrUnexpected
 	}
 
-	var data []byte
-	_, err = resp.Body.Read(data)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(fmt.Sprintf("fail to read response body! error: %s", err))
 		return 0, common.ErrUnexpected
@@ -71,7 +72,12 @@ func (c *BinanceClient) GetPrice(symbol string, currency string) (float64, error
 		return 0, common.ErrUnexpected
 	}
 
-	return cryptocur.Price, nil
+	price, err := strconv.ParseFloat(cryptocur.Price, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return price, nil
 }
 
 func (c *BinanceClient) SymbolExists(symbol string) (bool, error) {

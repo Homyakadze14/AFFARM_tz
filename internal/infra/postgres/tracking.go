@@ -45,7 +45,7 @@ func (r *TrackingRepo) get(ctx context.Context, op string, condition string, arg
 		args...)
 
 	var t entity.Tracking
-	err := row.Scan(t.ID, t.CryptocurrencyID, t.IsActive)
+	err := row.Scan(&t.ID, &t.CryptocurrencyID, &t.IsActive)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrTrackingNotFound)

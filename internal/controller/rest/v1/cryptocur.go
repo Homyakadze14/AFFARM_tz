@@ -3,6 +3,7 @@ package v1
 import (
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/Homyakadze14/AFFARM_tz/internal/common"
 	"github.com/Homyakadze14/AFFARM_tz/internal/dto"
@@ -37,7 +38,7 @@ func handlErr(c *gin.Context, log *slog.Logger, err error) {
 // @Summary     Add cryptocurrency
 // @Description Add cryptocurrency
 // @ID          AddCryptocurrency
-// @Tags  	    AddCryptocurrency
+// @Tags  	    Cryptocurrency
 // @Accept      json
 // @Param 		cryptocurrency body dto.AddCryptocurrencyRequest false "Cryptocurrency add data"
 // @Success     200
@@ -72,7 +73,7 @@ func (r *cryptocurrencyRoutes) add(c *gin.Context) {
 // @Summary     Remove cryptocurrency
 // @Description Remove cryptocurrency
 // @ID          RemoveCryptocurrency
-// @Tags  	    RemoveCryptocurrency
+// @Tags  	    Cryptocurrency
 // @Accept      json
 // @Param 		cryptocurrency body dto.RemoveCryptocurrencyRequest false "Cryptocurrency remove data"
 // @Success     200
@@ -107,7 +108,7 @@ func (r *cryptocurrencyRoutes) remove(c *gin.Context) {
 // @Summary     Get price
 // @Description Get pice
 // @ID          GetPriceCryptocurrency
-// @Tags  	    GetPriceCryptocurrency
+// @Tags  	    Cryptocurrency
 // @Accept      json
 // @Param 		price body dto.PriceRequest false "Get price data"
 // @Produce     json
@@ -128,14 +129,22 @@ func (r *cryptocurrencyRoutes) price(c *gin.Context) {
 		return
 	}
 
-	hist, err := r.h.Price(c.Request.Context(), req.Symbol, req.Timestamp)
+	timestamp := time.Unix(req.Timestamp, 0)
+	if timestamp.IsZero() {
+		log.Error("invalid timestamp value", "timestamp", req.Timestamp)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid timestamp value"})
+		return
+	}
+
+	hist, err := r.h.Price(c.Request.Context(), req.Symbol, timestamp)
 	if err != nil {
 		handlErr(c, log, err)
 		return
 	}
 
 	resp := &dto.PriceResponse{
-		Price: hist.Price,
+		Price:     hist.Price,
+		Timestamp: hist.Timestamp.Unix(),
 	}
 	c.JSON(http.StatusOK, resp)
 }

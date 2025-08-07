@@ -12,21 +12,17 @@ import (
 )
 
 type CryptocurrencyStorage interface {
-	Create(ctx context.Context, cryptocur *entity.Cryptocurrency) (*entity.Cryptocurrency, error)
 	GetBySymbol(ctx context.Context, symbol string) (*entity.Cryptocurrency, error)
-	GetAll(ctx context.Context) ([]entity.Cryptocurrency, error)
 	CreateOrGet(ctx context.Context, c *entity.Cryptocurrency) (*entity.Cryptocurrency, error)
 }
 
 type TrackingStorage interface {
 	Create(ctx context.Context, trc *entity.Tracking) (*entity.Tracking, error)
 	GetByCryptocurrencyID(ctx context.Context, crid int) (*entity.Tracking, error)
-	GetActive(ctx context.Context) ([]entity.Tracking, error)
 	Update(ctx context.Context, trc *entity.Tracking) (*entity.Tracking, error)
 }
 
 type HistoryStorage interface {
-	Create(ctx context.Context, history *entity.PriceHistory) (*entity.PriceHistory, error)
 	GetNearestPrice(ctx context.Context, cryptocurrencyID int, timestamp time.Time) (*entity.PriceHistory, error)
 }
 
@@ -51,6 +47,7 @@ func NewCryptocurrencyService(
 	cryptoCient CryptoClient,
 ) *CryptocurrencyService {
 	return &CryptocurrencyService{
+		log:         log,
 		cst:         cst,
 		tst:         tst,
 		hst:         hst,
@@ -103,7 +100,7 @@ func (s *CryptocurrencyService) Add(ctx context.Context, cr *entity.Cryptocurren
 
 	if !trc.IsActive {
 		trc.IsActive = true
-		trc, err = s.tst.Update(ctx, trc)
+		_, err = s.tst.Update(ctx, trc)
 		if err != nil {
 			log.Error(fmt.Sprintf("fail to update tracking! Error: %s", err))
 			return err

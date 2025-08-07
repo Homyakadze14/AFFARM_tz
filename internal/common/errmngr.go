@@ -51,6 +51,9 @@ func ParseErr(errs error) (status int, err error) {
 	case errors.Is(errs, ErrTrackingNotFound):
 		status = http.StatusNotFound
 		newErrMes += fmt.Sprintf("%v;", ErrTrackingNotFound)
+	case errors.Is(errs, ErrSymbolNotFound):
+		status = http.StatusNotFound
+		newErrMes += fmt.Sprintf("%v;", ErrSymbolNotFound)
 	case newErrMes == "":
 		status = http.StatusInternalServerError
 		newErrMes = "Internal server error"

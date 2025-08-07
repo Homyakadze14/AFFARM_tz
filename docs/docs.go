@@ -22,7 +22,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AddCryptocurrency"
+                    "Cryptocurrency"
                 ],
                 "summary": "Add cryptocurrency",
                 "operationId": "AddCryptocurrency",
@@ -62,7 +62,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "GetPriceCryptocurrency"
+                    "Cryptocurrency"
                 ],
                 "summary": "Get price",
                 "operationId": "GetPriceCryptocurrency",
@@ -102,7 +102,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "RemoveCryptocurrency"
+                    "Cryptocurrency"
                 ],
                 "summary": "Remove cryptocurrency",
                 "operationId": "RemoveCryptocurrency",

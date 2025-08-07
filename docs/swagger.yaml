@@ -52,7 +52,7 @@ paths:
           description: Internal Server Error
       summary: Add cryptocurrency
       tags:
-      - AddCryptocurrency
+      - Cryptocurrency
   /currency/price:
     post:
       consumes:
@@ -80,7 +80,7 @@ paths:
           description: Internal Server Error
       summary: Get price
       tags:
-      - GetPriceCryptocurrency
+      - Cryptocurrency
   /currency/remove:
     post:
       consumes:
@@ -104,5 +104,5 @@ paths:
           description: Internal Server Error
       summary: Remove cryptocurrency
       tags:
-      - RemoveCryptocurrency
+      - Cryptocurrency
 swagger: "2.0"
