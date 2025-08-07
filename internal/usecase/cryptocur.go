@@ -116,3 +116,34 @@ func (s *CryptocurrencyService) Add(ctx context.Context, cr *entity.Cryptocurren
 
 	return nil
 }
+
+func (s *CryptocurrencyService) Remove(ctx context.Context, cr *entity.Cryptocurrency) error {
+	const op = "CryptocurrencyService.Remove"
+	log := s.log.With(slog.String("op", op),
+		slog.String("symbol", cr.Symbol))
+
+	log.Debug("trying to remove cryptocurrency")
+	cr, err := s.cst.GetBySymbol(ctx, cr.Symbol)
+	if err != nil {
+		log.Error(fmt.Sprintf("fail to get cryptocurrency by symbol! Error: %s", err))
+		return err
+	}
+
+	tr, err := s.tst.GetByCryptocurrencyID(ctx, cr.ID)
+	if err != nil {
+		log.Error(fmt.Sprintf("fail to get tracking by cryptocurrency! Error: %s", err))
+		return err
+	}
+
+	tr.IsActive = false
+	_, err = s.tst.Update(ctx, tr)
+	if err != nil {
+		log.Error(fmt.Sprintf("fail to update tracking! Error: %s", err))
+		return err
+	}
+
+	// TODO: Удалить задачу сбора цен
+	log.Debug("successfully removed cryptocurrency")
+
+	return nil
+}
