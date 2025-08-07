@@ -48,7 +48,7 @@ func Run(
 
 	// HTTP Server
 	handler := gin.New()
-	v1.NewRouter(handler, cryptocurService)
+	v1.NewRouter(log, handler, cryptocurService)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
 	return &HttpServer{s: httpServer, db: pg, log: log}

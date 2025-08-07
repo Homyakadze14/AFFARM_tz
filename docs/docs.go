@@ -15,21 +15,157 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/hello": {
-            "get": {
-                "description": "Test",
+        "/currency/add": {
+            "post": {
+                "description": "Add cryptocurrency",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AddCryptocurrency"
+                ],
+                "summary": "Add cryptocurrency",
+                "operationId": "AddCryptocurrency",
+                "parameters": [
+                    {
+                        "description": "Cryptocurrency add data",
+                        "name": "cryptocurrency",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddCryptocurrencyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/currency/price": {
+            "post": {
+                "description": "Get pice",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "GetPriceCryptocurrency"
                 ],
-                "summary": "Test",
-                "operationId": "Test",
+                "summary": "Get price",
+                "operationId": "GetPriceCryptocurrency",
+                "parameters": [
+                    {
+                        "description": "Get price data",
+                        "name": "price",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PriceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PriceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/currency/remove": {
+            "post": {
+                "description": "Remove cryptocurrency",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RemoveCryptocurrency"
+                ],
+                "summary": "Remove cryptocurrency",
+                "operationId": "RemoveCryptocurrency",
+                "parameters": [
+                    {
+                        "description": "Cryptocurrency remove data",
+                        "name": "cryptocurrency",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RemoveCryptocurrencyRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AddCryptocurrencyRequest": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PriceRequest": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PriceResponse": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.RemoveCryptocurrencyRequest": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string"
                 }
             }
         }
@@ -42,8 +178,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "TestSote",
-	Description:      "RestAPI for test site",
+	Title:            "AFFARM",
+	Description:      "RestAPI for AFFARM",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -1,21 +1,108 @@
 basePath: /api/v1
+definitions:
+  dto.AddCryptocurrencyRequest:
+    properties:
+      symbol:
+        type: string
+    type: object
+  dto.PriceRequest:
+    properties:
+      symbol:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  dto.PriceResponse:
+    properties:
+      price:
+        type: number
+    type: object
+  dto.RemoveCryptocurrencyRequest:
+    properties:
+      symbol:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
-  description: RestAPI for test site
-  title: TestSote
+  description: RestAPI for AFFARM
+  title: AFFARM
   version: "1.0"
 paths:
-  /hello:
-    get:
-      description: Test
-      operationId: Test
+  /currency/add:
+    post:
+      consumes:
+      - application/json
+      description: Add cryptocurrency
+      operationId: AddCryptocurrency
+      parameters:
+      - description: Cryptocurrency add data
+        in: body
+        name: cryptocurrency
+        schema:
+          $ref: '#/definitions/dto.AddCryptocurrencyRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Add cryptocurrency
+      tags:
+      - AddCryptocurrency
+  /currency/price:
+    post:
+      consumes:
+      - application/json
+      description: Get pice
+      operationId: GetPriceCryptocurrency
+      parameters:
+      - description: Get price data
+        in: body
+        name: price
+        schema:
+          $ref: '#/definitions/dto.PriceRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
-      summary: Test
+          schema:
+            $ref: '#/definitions/dto.PriceResponse'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get price
       tags:
-      - Test
+      - GetPriceCryptocurrency
+  /currency/remove:
+    post:
+      consumes:
+      - application/json
+      description: Remove cryptocurrency
+      operationId: RemoveCryptocurrency
+      parameters:
+      - description: Cryptocurrency remove data
+        in: body
+        name: cryptocurrency
+        schema:
+          $ref: '#/definitions/dto.RemoveCryptocurrencyRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Remove cryptocurrency
+      tags:
+      - RemoveCryptocurrency
 swagger: "2.0"

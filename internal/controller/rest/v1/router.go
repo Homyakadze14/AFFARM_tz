@@ -2,6 +2,7 @@
 package v1
 
 import (
+	"log/slog"
 	"net/http"
 
 	_ "github.com/Homyakadze14/AFFARM_tz/docs"
@@ -15,12 +16,12 @@ import (
 )
 
 // Swagger spec:
-// @title       TestSote
-// @description RestAPI for test site
+// @title       AFFARM
+// @description RestAPI for AFFARM
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /api/v1
-func NewRouter(handler *gin.Engine, h *usecase.CryptocurrencyService) {
+func NewRouter(log *slog.Logger, handler *gin.Engine, h *usecase.CryptocurrencyService) {
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
@@ -44,6 +45,6 @@ func NewRouter(handler *gin.Engine, h *usecase.CryptocurrencyService) {
 	// Routers
 	g := handler.Group("/api/v1")
 	{
-		NewHellotRoutes(g, h)
+		NewHellotRoutes(log, g, h)
 	}
 }
