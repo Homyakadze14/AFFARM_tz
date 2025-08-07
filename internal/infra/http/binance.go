@@ -7,11 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
-)
 
-var (
-	ErrUnexpected = errors.New("unexpected error")
-	ErrBadData    = errors.New("wrong symbol or currency")
+	"github.com/Homyakadze14/AFFARM_tz/internal/common"
 )
 
 type BinanceClient struct {
@@ -48,30 +45,30 @@ func (c *BinanceClient) GetPrice(symbol string, currency string) (float64, error
 	resp, err := c.client.Get(priceURL)
 	if err != nil {
 		log.Error(fmt.Sprintf("fail to get price! error: %s", err))
-		return 0, ErrUnexpected
+		return 0, common.ErrUnexpected
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		log.Error(fmt.Sprintf("bad status code! code: %s", resp.Status))
 		if resp.StatusCode == http.StatusBadRequest {
-			return 0, ErrBadData
+			return 0, common.ErrBadData
 		}
-		return 0, ErrUnexpected
+		return 0, common.ErrUnexpected
 	}
 
 	var data []byte
 	_, err = resp.Body.Read(data)
 	if err != nil {
 		log.Error(fmt.Sprintf("fail to read response body! error: %s", err))
-		return 0, ErrUnexpected
+		return 0, common.ErrUnexpected
 	}
 
 	cryptocur := &Cryptocurrency{}
 	err = json.Unmarshal(data, cryptocur)
 	if err != nil {
 		log.Error(fmt.Sprintf("fail to unmarshal response body! error: %s", err))
-		return 0, ErrUnexpected
+		return 0, common.ErrUnexpected
 	}
 
 	return cryptocur.Price, nil
@@ -84,7 +81,7 @@ func (c *BinanceClient) SymbolExists(symbol string) (bool, error) {
 
 	_, err := c.GetPrice(symbol, "USDT")
 	if err != nil {
-		if errors.Is(err, ErrBadData) {
+		if errors.Is(err, common.ErrBadData) {
 			return false, nil
 		}
 		log.Error(fmt.Sprintf("fail to check existence! error: %s", err))

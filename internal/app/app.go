@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/Homyakadze14/AFFARM_tz/internal/config"
 	v1 "github.com/Homyakadze14/AFFARM_tz/internal/controller/rest/v1"
+	"github.com/Homyakadze14/AFFARM_tz/internal/infra/http"
 	psg "github.com/Homyakadze14/AFFARM_tz/internal/infra/postgres"
 	services "github.com/Homyakadze14/AFFARM_tz/internal/usecase"
 	"github.com/Homyakadze14/AFFARM_tz/pkg/httpserver"
@@ -34,9 +36,15 @@ func Run(
 
 	// Repository
 	cryptocurRepo := psg.NewCryptocurrencyRepository(pg)
+	trakingRepo := psg.NewTrackingRepository(pg)
+	historyRepo := psg.NewHistoryRepository(pg)
+
+	// Client
+	timeout := 5 * time.Second
+	binanceClient := http.NewBinanceClient(log, timeout)
 
 	// Services
-	cryptocurService := services.NewCryptocurrencyService(cryptocurRepo)
+	cryptocurService := services.NewCryptocurrencyService(log, cryptocurRepo, trakingRepo, historyRepo, binanceClient)
 
 	// HTTP Server
 	handler := gin.New()
