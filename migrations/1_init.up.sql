@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS cryptocurrencies (
     id SERIAL PRIMARY KEY,
-    symbol VARCHAR(10) NOT NULL UNIQUE,      
-    name VARCHAR(50) NOT NULL UNIQUE          
+    symbol VARCHAR(10) NOT NULL UNIQUE,    
 );
 
 CREATE TABLE IF NOT EXISTS trackings (

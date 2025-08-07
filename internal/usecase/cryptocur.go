@@ -61,8 +61,7 @@ func NewCryptocurrencyService(
 func (s *CryptocurrencyService) Add(ctx context.Context, cr *entity.Cryptocurrency) error {
 	const op = "CryptocurrencyService.Add"
 	log := s.log.With(slog.String("op", op),
-		slog.String("symbol", cr.Symbol),
-		slog.String("name", cr.Name))
+		slog.String("symbol", cr.Symbol))
 
 	log.Debug("trying to add cryptocurrency")
 	exists, err := s.cryptoCient.SymbolExists(cr.Symbol)

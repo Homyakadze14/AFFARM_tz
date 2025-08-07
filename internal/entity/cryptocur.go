@@ -5,7 +5,6 @@ import "time"
 type Cryptocurrency struct {
 	ID     int
 	Symbol string
-	Name   string
 }
 
 type Tracking struct {

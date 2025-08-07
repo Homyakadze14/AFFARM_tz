@@ -26,9 +26,9 @@ func (r *CryptocurRepo) Create(ctx context.Context, cryptocur *entity.Cryptocurr
 	const op = "CryptocurRepo.Create"
 
 	err := r.Pool.QueryRow(ctx,
-		`INSERT INTO cryptocurrencies (symbol, name)
-		VALUES ($1, $2)
-		RETURNING id;`, cryptocur.Symbol, cryptocur.Name).Scan(&cryptocur.ID)
+		`INSERT INTO cryptocurrencies (symbol)
+		VALUES ($1)
+		RETURNING id;`, cryptocur.Symbol).Scan(&cryptocur.ID)
 	if err != nil {
 		if strings.Contains(err.Error(), "SQLSTATE 23505") {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrCryptocurrencyAlreadyExists)
@@ -41,11 +41,11 @@ func (r *CryptocurRepo) Create(ctx context.Context, cryptocur *entity.Cryptocurr
 
 func (r *CryptocurRepo) get(ctx context.Context, op string, condition string, args ...interface{}) (*entity.Cryptocurrency, error) {
 	row := r.Pool.QueryRow(ctx,
-		fmt.Sprintf("SELECT id, symbol, name FROM cryptocurrencies WHERE %s", condition),
+		fmt.Sprintf("SELECT id, symbol FROM cryptocurrencies WHERE %s", condition),
 		args...)
 
 	var c entity.Cryptocurrency
-	err := row.Scan(c.ID, c.Symbol, c.Name)
+	err := row.Scan(c.ID, c.Symbol)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("%s: %w", op, common.ErrCryptocurrencyNotFound)
@@ -77,7 +77,7 @@ func (r *CryptocurRepo) GetAll(ctx context.Context) ([]entity.Cryptocurrency, er
 		var crypt entity.Cryptocurrency
 
 		err := rows.Scan(
-			&crypt.ID, &crypt.Symbol, &crypt.Name,
+			&crypt.ID, &crypt.Symbol,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
