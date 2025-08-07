@@ -147,3 +147,26 @@ func (s *CryptocurrencyService) Remove(ctx context.Context, cr *entity.Cryptocur
 
 	return nil
 }
+
+func (s *CryptocurrencyService) Price(ctx context.Context, symbol string, timestamp time.Time) (*entity.PriceHistory, error) {
+	const op = "CryptocurrencyService.Price"
+	log := s.log.With(slog.String("op", op),
+		slog.String("symbol", symbol),
+		slog.Time("timestamp", timestamp))
+
+	log.Debug("trying to get price of cryptocurrency")
+	cr, err := s.cst.GetBySymbol(ctx, symbol)
+	if err != nil {
+		log.Error(fmt.Sprintf("fail to get cryptocurrency by symbol! Error: %s", err))
+		return nil, err
+	}
+
+	hist, err := s.hst.GetNearestPrice(ctx, cr.ID, timestamp)
+	if err != nil {
+		log.Error(fmt.Sprintf("fail to get nearest price! Error: %s", err))
+		return nil, err
+	}
+	log.Debug("successfully got price of cryptocurrency")
+
+	return hist, nil
+}
